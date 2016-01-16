@@ -12,7 +12,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; pry debugger
+;;; byebug debugger
 
 (eval-when-compile (require 'cl))
 
@@ -23,39 +23,41 @@
 (defvar realgud-pat-hash)
 (declare-function make-realgud-loc-pat (realgud-loc))
 
-(defconst realgud:pry-debugger-name "pry" "Name of debugger")
+(defconst realgud:byebug-debugger-name "byebug" "Name of debugger")
 
-(defvar realgud:pry-pat-hash (make-hash-table :test 'equal)
+(defvar realgud:byebug-pat-hash (make-hash-table :test 'equal)
   "hash key is the what kind of pattern we want to match:
 backtrace, prompt, etc.  the values of a hash entry is a
 realgud-loc-pat struct")
 
 (declare-function make-realgud-loc "realgud-loc" (a b c d e f))
 
-(defconst realgud:pry-frame-file-regexp (format "\\(.+\\)"))
+(defconst realgud:byebug-frame-file-regexp "\\(.+\\)")
 
-;; Regular expression that describes a pry location generally shown
+;; Regular expression that describes a byebug location generally shown
 ;; before a command prompt.
 ;; For example:
-;; From: /Users/mypizza/mypizza-web/config/environments/development.rb @ line 12 :
-(setf (gethash "loc" realgud:pry-pat-hash)
+;; [10, 19] in /Users/rocky/gcd.rb
+;;    1: #!/usr/bin/env/ruby
+;; => 4: def gcd
+(setf (gethash "loc" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
-       :regexp (format "^From: %s @ line %s"
-		       realgud:pry-frame-file-regexp realgud:regexp-captured-num)
+       :regexp (format "^\\[[0-9]+, [0-9]+\\] in %s\n.*\n=>[ ]*%s: "
+		       realgud:byebug-frame-file-regexp realgud:regexp-captured-num)
        :file-group 1
        :line-group 2))
 
-;; Regular expression that describes a pry prompt
+;; Regular expression that describes a byebug prompt
 ;; For example:
-;;  [7] pry(#<Mypizza::Application>)>
-;;  [10] pry(main)>
-(setf (gethash "prompt" realgud:pry-pat-hash)
+;;  [7] byebug(#<Mypizza::Application>)>
+;;  [10] byebug(main)>
+(setf (gethash "prompt" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
-       :regexp   "^\\[[0-9]+\\] pry(.*)> " 
+       :regexp   "^(byebug) " 
        ))
 
 ;; Regular expression that describes a Ruby YARV syntax error line.
-(setf (gethash "syntax-error" realgud:pry-pat-hash)
+(setf (gethash "syntax-error" realgud:byebug-pat-hash)
       realgud-ruby-YARV-syntax-error-pat)
 
 ;; Regular expression that describes a Ruby YARV backtrace line.
@@ -63,20 +65,20 @@ realgud-loc-pat struct")
 ;; 	from /ruby/gems/2.2.0/gems/fog-1.32.0/lib/fog/digitalocean.rb:1:in `<top (required)>'
 ;; 	from /Users/fog-1.32.0/lib/fog.rb:28:in `require'
 ;;	from /usr/lib/ruby/gems/rspec/compatibility.rb:6:in `const_missing'
-(setf (gethash "lang-backtrace" realgud:pry-pat-hash)
+(setf (gethash "lang-backtrace" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
        :regexp "^\\(?:[\t]from \\)?\\([^:]+\\):\\([0-9]+\\)\\(?:in `.*'\\)?"
        :file-group 1
        :line-group 2))
 
 ;;  Regular expression that describes a ruby $! backtrace
-(setf (gethash "dollar-bang-backtrace" realgud:pry-pat-hash)
+(setf (gethash "dollar-bang-backtrace" realgud:byebug-pat-hash)
       realgud-ruby-dollar-bang-loc-pat)
 
 ;; Regular expression that describes a "breakpoint set" line
 ;; For example:
 ;   Breakpoint 1: /Users/rocky/src/environments/development.rb @ 14 (Enabled) 
-(setf (gethash "brkpt-set" realgud:pry-pat-hash)
+(setf (gethash "brkpt-set" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
        :regexp (format "^Breakpoint %s \\(.+\\), @ \\([.*]\\) "
 		       realgud:regexp-captured-num realgud:regexp-captured-num)
@@ -85,33 +87,32 @@ realgud-loc-pat struct")
        :line-group 4))
 
 ;;  Regular expression that describes a Ruby $! string
-(setf (gethash "dollar-bang" realgud:pry-pat-hash)
+(setf (gethash "dollar-bang" realgud:byebug-pat-hash)
       realgud-ruby-dollar-bang-loc-pat)
 
 
-(defconst realgud:pry-frame-num-regexp
+(defconst realgud:byebug-frame-num-regexp
   (format "#%s " realgud:regexp-captured-num))
 
 
-(setf (gethash "pry" realgud-pat-hash) realgud:pry-pat-hash)
+(setf (gethash "byebug" realgud-pat-hash) realgud:byebug-pat-hash)
 
 ;;  Prefix used in variable names (e.g. short-key-mode-map) for
 ;; this debugger
 
-(setf (gethash "pry" realgud:variable-basename-hash) "realgud:pry")
+(setf (gethash "byebug" realgud:variable-basename-hash) "realgud:byebug")
 
-(defvar realgud:pry-command-hash (make-hash-table :test 'equal)
+(defvar realgud:byebug-command-hash (make-hash-table :test 'equal)
   "Hash key is command name like 'continue' and the value is
-  the pry command to use, like 'continue'")
+  the byebug command to use, like 'continue'")
 
-(setf (gethash realgud:pry-debugger-name
-	       realgud-command-hash) realgud:pry-command-hash)
+(setf (gethash realgud:byebug-debugger-name
+	       realgud-command-hash) realgud:byebug-command-hash)
 
-(setf (gethash "break"    realgud:pry-command-hash) "break %l")
-(setf (gethash "continue" realgud:pry-command-hash) "continue")
-(setf (gethash "clear"    realgud:pry-command-hash) "*not-implemented*")
-(setf (gethash "up"       realgud:pry-command-hash) "*not-implemented*")
-(setf (gethash "down"     realgud:pry-command-hash) "*not-implemented*")
+(setf (gethash "break"    realgud:byebug-command-hash) "break %l")
+(setf (gethash "continue" realgud:byebug-command-hash) "continue")
+(setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
+(setf (gethash "shell" realgud:trepan-command-hash) "pry")
 
 
-(provide-me "realgud:pry-")
+(provide-me "realgud:byebug-")

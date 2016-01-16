@@ -13,17 +13,17 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;  `realgud:pry' Main interface to pry via Emacs
+;;  `realgud:byebug' Main interface to byebug via Emacs
 (require 'cl)
 (require 'load-relative)
 (require-relative-list '("../../common/helper" "../../common/utils")
 		       "realgud-")
-(require-relative-list '("core" "track-mode") "realgud:pry-")
+(require-relative-list '("core" "track-mode") "realgud:byebug-")
 
 ;; This is needed, or at least the docstring part of it is needed to
 ;; get the customization menu to work in Emacs 24.
-(defgroup realgud:pry nil
-  "The realgud interface to pry"
+(defgroup realgud:byebug nil
+  "The realgud interface to byebug"
   :group 'realgud
   :version "24.5")
 
@@ -31,17 +31,17 @@
 ;; User definable variables
 ;;
 
-(defcustom realgud:pry-command-name
-  "pry"
+(defcustom realgud:byebug-command-name
+  "byebug"
   "File name for executing the and command options.
 This should be an executable on your path, or an absolute file name."
   :type 'string
-  :group 'realgud:pry)
+  :group 'realgud:byebug)
 
-(declare-function realgud:pry-track-mode     'realgud:pry-track-mode)
-(declare-function realgud-command            'realgud:pry-core)
-(declare-function realgud:pry-parse-cmd-args 'realgud:pry-core)
-(declare-function realgud:pry-query-cmdline  'realgud:pry-core)
+(declare-function realgud:byebug-track-mode     'realgud:byebug-track-mode)
+(declare-function realgud-command            'realgud:byebug-core)
+(declare-function realgud:byebug-parse-cmd-args 'realgud:byebug-core)
+(declare-function realgud:byebug-query-cmdline  'realgud:byebug-core)
 (declare-function realgud:run-process        'realgud-core)
 (declare-function realgud:flatten            'realgud-utils)
 
@@ -50,8 +50,8 @@ This should be an executable on your path, or an absolute file name."
 ;;
 
 ;;;###autoload
-(defun realgud:pry (&optional opt-cmd-line no-reset)
-  "Invoke the pry debugger and start the Emacs user interface.
+(defun realgud:byebug (&optional opt-cmd-line no-reset)
+  "Invoke the byebug debugger and start the Emacs user interface.
 
 OPT-CMD-LINE is treated like a shell string; arguments are
 tokenized by `split-string-and-unquote'.
@@ -66,16 +66,16 @@ fringe and marginal icons.
 "
 
   (interactive)
-  (let* ((cmd-str (or opt-cmd-line (realgud:pry-query-cmdline "pry")))
+  (let* ((cmd-str (or opt-cmd-line (realgud:byebug-query-cmdline "byebug")))
 	 (cmd-args (split-string-and-unquote cmd-str))
-	 (parsed-args (realgud:pry-parse-cmd-args cmd-args))
+	 (parsed-args (realgud:byebug-parse-cmd-args cmd-args))
 	 (script-args (caddr parsed-args))
 	 (script-name (car script-args))
 	 (parsed-cmd-args
 	  (cl-remove-if 'nil (realgud:flatten parsed-args)))
-	 (cmd-buf (realgud:run-process realgud:pry-command-name
+	 (cmd-buf (realgud:run-process realgud:byebug-command-name
 				       script-name parsed-cmd-args
-				       'realgud:pry-minibuffer-history
+				       'realgud:byebug-minibuffer-history
 				       nil))
 	 )
     (if cmd-buf

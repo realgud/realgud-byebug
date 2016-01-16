@@ -14,53 +14,53 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;; pry tracking a comint or eshell buffer.
+;; byebug tracking a comint or eshell buffer.
 
 (eval-when-compile (require 'cl))
 
 (require 'realgud)
 
-(require-relative-list '("core" "init") "realgud:pry-")
+(require-relative-list '("core" "init") "realgud:byebug-")
 
-(realgud-track-mode-vars "realgud:pry")
+(realgud-track-mode-vars "realgud:byebug")
 
 (declare-function realgud-track-mode 'realgud-track-mode)
 (declare-function realgud:track-mode-hook 'realgud-track-mode)
 (declare-function realgud-track-mode-setup 'realgud-track-mode)
 (declare-function realgud:track-set-debugger 'realgud-track-mode)
 
-(define-key realgud:pry-track-mode-map
+(define-key realgud:byebug-track-mode-map
   (kbd "C-c !b") 'realgud:goto-debugger-backtrace-line)
 
-(defun realgud:pry-track-mode-hook()
-  (use-local-map realgud:pry-track-mode-map)
+(defun realgud:byebug-track-mode-hook()
+  (use-local-map realgud:byebug-track-mode-map)
   (realgud-track-mode-setup 't)
-  (message "realgud:pry track-mode-hook called")
+  (message "realgud:byebug track-mode-hook called")
 )
 
-(define-minor-mode realgud:pry-track-mode
-  "Minor mode for tracking pry inside a process shell via realgud.
+(define-minor-mode realgud:byebug-track-mode
+  "Minor mode for tracking byebug inside a process shell via realgud.
 
 If called interactively with no prefix argument, the mode is toggled. A prefix argument, captured as ARG, enables the mode if the argument is positive, and disables it otherwise.
 
 Key bindings:
-\\{realgud:pry-track-mode-map}
+\\{realgud:byebug-track-mode-map}
 "
   :init-value nil
-  ;; :lighter " pry"   ;; mode-line indicator from realgud-track is sufficient.
+  ;; :lighter " byebug"   ;; mode-line indicator from realgud-track is sufficient.
   ;; The minor mode bindings.
   :global nil
-  :group 'realgud:pry
-  :keymap realgud:pry-track-mode-map
-  (if realgud:pry-track-mode
+  :group 'realgud:byebug
+  :keymap realgud:byebug-track-mode-map
+  (if realgud:byebug-track-mode
       (progn
-	(realgud:track-set-debugger "pry" "realgud:pry")
-        (realgud:pry-track-mode-hook)
+	(realgud:track-set-debugger "byebug" "realgud:byebug")
+        (realgud:byebug-track-mode-hook)
         (realgud:track-mode-enable))
     (progn
       (setq realgud-track-mode nil)
       ))
 )
 
-(provide-me "realgud:pry-")
+(provide-me "realgud:byebug-")
 ;;; track-mode.el ends here

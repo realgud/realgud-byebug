@@ -23,58 +23,58 @@
 
 ;; FIXME: I think the following could be generalized and moved to
 ;; realgud-... probably via a macro.
-(defvar realgud:pry-minibuffer-history nil
-  "minibuffer history list for the command `pry'.")
+(defvar realgud:byebug-minibuffer-history nil
+  "minibuffer history list for the command `byebug'.")
 
-(easy-mmode-defmap realgud:pry-minibuffer-local-map
+(easy-mmode-defmap realgud:byebug-minibuffer-local-map
   '(("\C-i" . comint-dynamic-complete-filename))
   "Keymap for minibuffer prompting of gud startup command."
   :inherit minibuffer-local-map)
 
 ;; FIXME: I think this code and the keymaps and history
 ;; variable chould be generalized, perhaps via a macro.
-(defun realgud:pry-query-cmdline (&optional opt-debugger)
+(defun realgud:byebug-query-cmdline (&optional opt-debugger)
   (realgud-query-cmdline
-   'realgud:pry-suggest-invocation
-   realgud:pry-minibuffer-local-map
-   'realgud:pry-minibuffer-history
+   'realgud:byebug-suggest-invocation
+   realgud:byebug-minibuffer-local-map
+   'realgud:byebug-minibuffer-history
    opt-debugger))
 
-(defun realgud:pry-parse-cmd-args (orig-args)
+(defun realgud:byebug-parse-cmd-args (orig-args)
   "Parse command line ARGS for the annotate level and name of script to debug.
 
 ORIG_ARGS should contain a tokenized list of the command line to run.
 
 We return the a list containing
-* the name of the debugger given (e.g. pry) and its arguments - a list of strings
+* the name of the debugger given (e.g. byebug) and its arguments - a list of strings
 * nil (a placehoder in other routines of this ilk for a debugger
 * the script name and its arguments - list of strings
 * whether the annotate or emacs option was given ('-A', '--annotate' or '--emacs) - a boolean
 
 For example for the following input
   (map 'list 'symbol-name
-   '(pry --tty /dev/pts/1 -cd ~ --emacs ./gcd.py a b))
+   '(byebug --tty /dev/pts/1 -cd ~ --emacs ./gcd.py a b))
 
 we might return:
-   ((\"pry\" \"--tty\" \"/dev/pts/1\" \"-cd\" \"home/rocky\' \"--emacs\") nil \"(/tmp/gcd.py a b\") 't\")
+   ((\"byebug\" \"--tty\" \"/dev/pts/1\" \"-cd\" \"home/rocky\' \"--emacs\") nil \"(/tmp/gcd.py a b\") 't\")
 
 Note that path elements have been expanded via `expand-file-name'.
 "
 
   ;; Parse the following kind of pattern:
-  ;;  pry pry-options script-name script-options
+  ;;  byebug byebug-options script-name script-options
   (let (
 	(args orig-args)
 	(pair)          ;; temp return from
 
 	;; One dash is added automatically to the below, so
 	;; h is really -h and -host is really --host.
-	(pry-two-args '("x" "-command" "b" "-exec"
+	(byebug-two-args '("x" "-command" "b" "-exec"
 			"cd" "-pid"  "-core" "-directory"
 			"-annotate"
 			"se" "-symbols" "-tty"))
-	;; pry doesn't optionsl 2-arg options.
-	(pry-opt-two-args '())
+	;; byebug doesn't optionsl 2-arg options.
+	(byebug-opt-two-args '())
 
 	;; Things returned
 	(script-name nil)
@@ -89,13 +89,13 @@ Note that path elements have been expanded via `expand-file-name'.
       ;; else
       (progn
 
-	;; Remove "pry" from "pry --pry-options script
+	;; Remove "byebug" from "byebug --byebug-options script
 	;; --script-options"
 	(setq debugger-name (file-name-sans-extension
 			     (file-name-nondirectory (car args))))
-	(unless (string-match "^pry.*" debugger-name)
+	(unless (string-match "^byebug.*" debugger-name)
 	  (message
-	   "Expecting debugger name `%s' to be `pry'"
+	   "Expecting debugger name `%s' to be `byebug'"
 	   debugger-name))
 	(setq debugger-args (list (pop args)))
 
@@ -121,7 +121,7 @@ Note that path elements have been expanded via `expand-file-name'.
 	     ;; Options with arguments.
 	     ((string-match "^-" arg)
 	      (setq pair (realgud-parse-command-arg
-			  args pry-two-args pry-opt-two-args))
+			  args byebug-two-args byebug-opt-two-args))
 	      (nconc debugger-args (car pair))
 	      (setq args (cadr pair)))
 	     ;; Anything else must be the script to debug.
@@ -130,10 +130,10 @@ Note that path elements have been expanded via `expand-file-name'.
 	     )))
 	(list debugger-args nil script-args annotate-p)))))
 
-(defvar realgud:pry-command-name)
+(defvar realgud:byebug-command-name)
 
-(defun realgud:pry-executable (file-name)
-"Return a priority for wehther file-name is likely we can run pry on"
+(defun realgud:byebug-executable (file-name)
+"Return a priority for wehther file-name is likely we can run byebug on"
   (let ((output (shell-command-to-string (format "file %s" file-name))))
     (cond
      ((string-match "ASCII" output) 2)
@@ -142,20 +142,20 @@ Note that path elements have been expanded via `expand-file-name'.
      ('t 5))))
 
 
-(defun realgud:pry-suggest-invocation (&optional debugger-name)
-  "Suggest a pry command invocation. Here is the priority we use:
+(defun realgud:byebug-suggest-invocation (&optional debugger-name)
+  "Suggest a byebug command invocation. Here is the priority we use:
 * an executable file with the name of the current buffer stripped of its extension
 * any executable file in the current directory with no extension
-* the last invocation in pry:minibuffer-history
+* the last invocation in byebug:minibuffer-history
 * any executable in the current directory
 When all else fails return the empty string."
   (let* ((file-list (directory-files default-directory))
 	 (priority 2)
 	 (best-filename nil)
-	 (try-filename (file-name-base (or (buffer-file-name) "pry"))))
+	 (try-filename (file-name-base (or (buffer-file-name) "byebug"))))
     (when (member try-filename (directory-files default-directory))
 	(setq best-filename try-filename)
-	(setq priority (+ (realgud:pry-executable try-filename) 2)))
+	(setq priority (+ (realgud:byebug-executable try-filename) 2)))
 
     ;; FIXME: I think a better test would be to look for
     ;; c-mode in the buffer that have a corresponding executable
@@ -166,46 +166,46 @@ When all else fails return the empty string."
 	  (if (equal try-filename (file-name-sans-extension try-filename))
 	      (progn
 		(setq best-filename try-filename)
-		(setq priority (1+ (realgud:pry-executable best-filename))))
+		(setq priority (1+ (realgud:byebug-executable best-filename))))
 	    ;; else
 	    (progn
 	      (setq best-filename try-filename)
-	      (setq priority (realgud:pry-executable best-filename))
+	      (setq priority (realgud:byebug-executable best-filename))
 	      ))
 	))
     (if (< priority 8)
 	(cond
-	 (realgud:pry-minibuffer-history
-	  (car realgud:pry-minibuffer-history))
+	 (realgud:byebug-minibuffer-history
+	  (car realgud:byebug-minibuffer-history))
 	 ((equal priority 7)
-	  (concat "pry " best-filename))
-	 (t "pry "))
+	  (concat "byebug " best-filename))
+	 (t "byebug "))
       ;; else
-      (concat "pry " best-filename))
+      (concat "byebug " best-filename))
     ))
 
-(defun realgud:pry-reset ()
-  "Pry cleanup - remove debugger's internal buffers (frame,
+(defun realgud:byebug-reset ()
+  "Byebug cleanup - remove debugger's internal buffers (frame,
 breakpoints, etc.)."
   (interactive)
-  ;; (pry-breakpoint-remove-all-icons)
+  ;; (byebug-breakpoint-remove-all-icons)
   (dolist (buffer (buffer-list))
-    (when (string-match "\\*pry-[a-z]+\\*" (buffer-name buffer))
+    (when (string-match "\\*byebug-[a-z]+\\*" (buffer-name buffer))
       (let ((w (get-buffer-window buffer)))
         (when w
           (delete-window w)))
       (kill-buffer buffer))))
 
-;; (defun pry-reset-keymaps()
+;; (defun byebug-reset-keymaps()
 ;;   "This unbinds the special debugger keys of the source buffers."
 ;;   (interactive)
-;;   (setcdr (assq 'pry-debugger-support-minor-mode minor-mode-map-alist)
-;; 	  pry-debugger-support-minor-mode-map-when-deactive))
+;;   (setcdr (assq 'byebug-debugger-support-minor-mode minor-mode-map-alist)
+;; 	  byebug-debugger-support-minor-mode-map-when-deactive))
 
 
-(defun realgud:pry-customize ()
-  "Use `customize' to edit the settings of the `realgud:pry' debugger."
+(defun realgud:byebug-customize ()
+  "Use `customize' to edit the settings of the `realgud:byebug' debugger."
   (interactive)
-  (customize-group 'realgud:pry))
+  (customize-group 'realgud:byebug))
 
-(provide-me "realgud:pry-")
+(provide-me "realgud:byebug-")

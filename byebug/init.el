@@ -112,7 +112,7 @@ realgud-loc-pat struct")
 (setf (gethash "break"    realgud:byebug-command-hash) "break %l")
 (setf (gethash "continue" realgud:byebug-command-hash) "continue")
 (setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
-(setf (gethash "shell" realgud:trepan-command-hash) "pry")
+(setf (gethash "shell" realgud:trepan-command-hash) "irb")
 
 
 (provide-me "realgud:byebug-")

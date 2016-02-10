@@ -16,8 +16,7 @@
 ;;  `realgud:byebug' Main interface to byebug via Emacs
 (require 'cl)
 (require 'load-relative)
-(require-relative-list '("../../common/helper" "../../common/utils")
-		       "realgud-")
+(require 'realgud)
 (require-relative-list '("core" "track-mode") "realgud:byebug-")
 
 ;; This is needed, or at least the docstring part of it is needed to

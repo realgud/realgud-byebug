@@ -38,7 +38,7 @@
   :group 'tools
   :version "24.3")
 
-(require-relative-list '( "./pry/pry" ) "realgud-")
+(require-relative-list '( "./byebug/byebug" ) "realgud-")
 
 (provide-me)
 

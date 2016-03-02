@@ -1,4 +1,4 @@
-;;; realgud-byebug.el --- A modular front-end for interacting with external debuggers
+;;; realgud-byebug.el --- realgud front-end to the Ruby byebug debugger
 
 ;; Author: Rocky Bernstein
 ;; Version: 1.0
@@ -44,5 +44,4 @@
 
 (provide-me)
 
-
-;;; byebug.el ends here
+;;; realgud-byebug.el ends here

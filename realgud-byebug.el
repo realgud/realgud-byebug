@@ -1,12 +1,12 @@
-;;; realgud.el --- A modular front-end for interacting with external debuggers
+;;; realgud-byebug.el --- A modular front-end for interacting with external debuggers
 
 ;; Author: Rocky Bernstein
 ;; Version: 1.0
-;; Package-Requires: ((realgud))
+;; Package-Requires: ((realgud "1.3"))
 ;; URL: http://github.com/rocky/realgud-byebug
 ;; Compatibility: GNU Emacs 24.x
 
-;; Copyright (C) 2015 Free Software Foundation, Inc
+;; Copyright (C) 2015, 2016 Free Software Foundation, Inc
 
 ;; Author: Rocky Bernstein <rocky@gnu.org>
 
@@ -29,13 +29,15 @@
 
 ;;; Code:
 
+;; Press C-x C-e at the end of the next line configure the program in
+;; for building via "make" to get set up.
+;; (compile (format "EMACSLOADPATH=:%s:%s ./autogen.sh" (file-name-directory (locate-library "test-simple.elc")) (file-name-directory (locate-library "realgud.elc"))))
+
 (require 'load-relative)
 
-(defgroup realgud nil
+(defgroup realgud-byebug  nil
   "Realgud interface to Ruby byebug debugger"
-  "The Grand Cathedral Debugger rewrite"
-  :group 'processes
-  :group 'tools
+  :group 'realgud
   :version "24.3")
 
 (require-relative-list '( "./byebug/byebug" ) "realgud-")

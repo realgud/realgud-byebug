@@ -1,6 +1,6 @@
 dnl FIXME: pick up from realgud.el
-AC_INIT(realgud-pry, 1.0,)
-AC_CONFIG_SRCDIR(pry/pry.el)
+AC_INIT(realgud-byebug, 1.0,)
+AC_CONFIG_SRCDIR(byebug/byebug.el)
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
@@ -48,7 +48,7 @@ AC_SUBST([lispdir_realgud])
 AM_CONDITIONAL(INSTALL_EMACS_LISP, test "x$lispdir_realgud" != "x")
 
 AC_CONFIG_FILES([Makefile \
-		 pry/Makefile \
+		 byebug/Makefile \
 		 test/Makefile \
 		 ])
 AC_OUTPUT

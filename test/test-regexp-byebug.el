@@ -3,7 +3,7 @@
 
 (require 'test-simple)
 (require 'load-relative)
-(require 'realgud-buffer-command)
+(require 'realgud)
 (load-file "../byebug/init.el")
 (load-file "./regexp-helper.el")
 

@@ -7,14 +7,18 @@
 (load-file "../byebug/init.el")
 (load-file "./regexp-helper.el")
 
+(declare-function cmdbuf-loc-match      'realgud-regexp-helper)
+(declare-function cmdbuf-loc-match      'realgud-regexp-helper)
+(declare-function loc-match             'realgud-regexp-helper)
+(declare-function prompt-match          'realgud-regexp-helper)
 (declare-function __FILE__              'load-relative)
 
 (test-simple-start)
 
 (eval-when-compile
   (defvar dbg-name)   (defvar realgud-pat-hash)   (defvar realgud-bt-hash)
-  (defvar loc-pat)    (defvar prompt-pat)         (defvar s1)
-  (defvar file-group) (defvar line-group)         (defvar pos)
+  (defvar loc-pat)    (defvar prompt-pat)         (defvar lang-bt-pat)
+  (defvar file-group) (defvar line-group)
   (defvar test-dbgr)  (defvar test-text)
 )
 
@@ -52,18 +56,18 @@
 ;;        setq however will workaround this.
 (setq lang-bt-pat  (gethash "lang-backtrace"
                             realgud:byebug-pat-hash))
-(set (make-local-variable 'text)
+(set (make-local-variable 'test-text)
      "	from /usr/local/bin/irb:12:in `<main>'")
 
-(setq text "	from /usr/local/bin/irb:12:in `<main>'")
-(assert-t (numberp (loc-match text lang-bt-pat))
+(setq test-text "	from /usr/local/bin/irb:12:in `<main>'")
+(assert-t (numberp (loc-match test-text lang-bt-pat))
 	  "basic traceback location")
 (assert-equal "/usr/local/bin/irb"
-	      (match-string (realgud-loc-pat-file-group lang-bt-pat) text)
+	      (match-string (realgud-loc-pat-file-group lang-bt-pat) test-text)
 	      "extract traceback file name")
 (assert-equal "12"
 	      (match-string (realgud-loc-pat-line-group
-			     lang-bt-pat) text)
+			     lang-bt-pat) test-text)
 	      "extract traceback line number")
 
 (note "prompt")

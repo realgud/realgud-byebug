@@ -20,7 +20,7 @@
 (require 'realgud-lang-ruby)
 (require 'ansi-color)
 
-(defvar realgud-pat-hash)
+(defvar realgud:byebug-pat-hash)
 (declare-function make-realgud-loc-pat (realgud-loc))
 
 (defconst realgud:byebug-debugger-name "byebug" "Name of debugger")
@@ -53,7 +53,7 @@ realgud-loc-pat struct")
 ;;  [10] byebug(main)>
 (setf (gethash "prompt" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
-       :regexp   "^(byebug) " 
+       :regexp   "^(byebug) "
        ))
 
 ;; Regular expression that describes a Ruby YARV syntax error line.
@@ -61,7 +61,7 @@ realgud-loc-pat struct")
       realgud-ruby-YARV-syntax-error-pat)
 
 ;; Regular expression that describes a Ruby YARV backtrace line.
-;; For example: 
+;; For example:
 ;; 	from /ruby/gems/2.2.0/gems/fog-1.32.0/lib/fog/digitalocean.rb:1:in `<top (required)>'
 ;; 	from /Users/fog-1.32.0/lib/fog.rb:28:in `require'
 ;;	from /usr/lib/ruby/gems/rspec/compatibility.rb:6:in `const_missing'
@@ -77,11 +77,11 @@ realgud-loc-pat struct")
 
 ;; Regular expression that describes a "breakpoint set" line
 ;; For example:
-;   Breakpoint 1: /Users/rocky/src/environments/development.rb @ 14 (Enabled) 
+;   Breakpoint 1: /Users/rocky/src/environments/development.rb @ 14 (Enabled)
 (setf (gethash "brkpt-set" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
        :regexp (format "^Breakpoint %s \\(.+\\), @ \\([.*]\\) "
-		       realgud:regexp-captured-num realgud:regexp-captured-num)
+		       realgud:regexp-captured-num)
        :num 1
        :file-group 3
        :line-group 4))

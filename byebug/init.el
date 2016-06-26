@@ -140,7 +140,7 @@ realgud-loc-pat struct")
 (setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
 (setf (gethash "shell"    realgud:byebug-command-hash) "irb")
 (setf (gethash "restart"  realgud:byebug-command-hash) "restart")
-(setf (gethash "until"    realgud:perldb-command-hash) "continue %l")
+(setf (gethash "until"    realgud:byebug-command-hash) "continue %l")
 
 ;; Unsupported features:
 (setf (gethash "jump"     realgud:byebug-command-hash) "*not-implemented*")

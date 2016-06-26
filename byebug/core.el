@@ -32,7 +32,7 @@
   :inherit minibuffer-local-map)
 
 ;; FIXME: I think this code and the keymaps and history
-;; variable chould be generalized, perhaps via a macro.
+;; variable should be generalized, perhaps via a macro.
 (defun realgud:byebug-query-cmdline (&optional opt-debugger)
   (realgud-query-cmdline
    'realgud:byebug-suggest-invocation
@@ -53,10 +53,10 @@ We return the a list containing
 
 For example for the following input
   (map 'list 'symbol-name
-   '(byebug --tty /dev/pts/1 -cd ~ --emacs ./gcd.py a b))
+   '(byebug -r columnize -d ./gcd.py a b))
 
 we might return:
-   ((\"byebug\" \"--tty\" \"/dev/pts/1\" \"-cd\" \"home/rocky\' \"--emacs\") nil \"(/tmp/gcd.py a b\") 't\")
+   ((\"byebug\" \"-r\" \"columnize\' \"-d\") nil \"(/tmp/gcd.py a b\") 't\")
 
 Note that path elements have been expanded via `expand-file-name'.
 "
@@ -69,23 +69,19 @@ Note that path elements have been expanded via `expand-file-name'.
 
 	;; One dash is added automatically to the below, so
 	;; h is really -h and -host is really --host.
-	(byebug-two-args '("x" "-command" "b" "-exec"
-			"cd" "-pid"  "-core" "-directory"
-			"-annotate"
-			"se" "-symbols" "-tty"))
-	;; byebug doesn't optionsl 2-arg options.
+	(byebug-two-args '("r" "-require" "R" "-remote" "I" "-include"))
+	;; byebug doesn't optional 2-arg options.
 	(byebug-opt-two-args '())
 
 	;; Things returned
 	(script-name nil)
 	(debugger-name nil)
 	(debugger-args '())
-	(script-args '())
-	(annotate-p nil))
+	(script-args '()))
 
     (if (not (and args))
 	;; Got nothing: return '(nil nil nil nil)
-	(list debugger-args nil script-args annotate-p)
+	(list debugger-args nil script-args nil)
       ;; else
       (progn
 
@@ -104,20 +100,6 @@ Note that path elements have been expanded via `expand-file-name'.
 	  (let ((arg (car args)))
 	    (cond
 	     ;; Annotation or emacs option with level number.
-	     ((or (member arg '("--annotate" "-A"))
-		  (equal arg "--emacs"))
-	      (setq annotate-p t)
-	      (nconc debugger-args (list (pop args) (pop args))))
-	     ;; Combined annotation and level option.
-	     ((string-match "^--annotate=[0-9]" arg)
-	      (nconc debugger-args (list (pop args) (pop args)) )
-	      (setq annotate-p t))
-	     ;; path-argument ooptions
-	     ((member arg '("-cd" ))
-	      (setq arg (pop args))
-	      (nconc debugger-args
-		     (list arg (realgud:expand-file-name-if-exists
-				(pop args)))))
 	     ;; Options with arguments.
 	     ((string-match "^-" arg)
 	      (setq pair (realgud-parse-command-arg
@@ -128,7 +110,7 @@ Note that path elements have been expanded via `expand-file-name'.
 	     (t (setq script-name arg)
 		(setq script-args args))
 	     )))
-	(list debugger-args nil script-args annotate-p)))))
+	(list debugger-args nil script-args nil)))))
 
 (defvar realgud:byebug-command-name)
 

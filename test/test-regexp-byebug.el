@@ -37,14 +37,20 @@
 ;; FIXME: we get a void variable somewhere in here when running
 ;;        even though we define it in lexical-let. Dunno why.
 ;;        setq however will workaround this.
-(setq test-text "[1, 10] in /Users/mypizza-web/development.rb\n    1: #!\n=>  2: def foo")
+(setq test-text "[1, 10] in /home/rocky/realgud-byebug/test/gcd.rb
+    1: #!/usr/bin/env ruby
+    2:
+    3: # GCD. We assume positive numbers
+=>  4: def gcd(a, b)
+    5:   # Make: a <= b
+")
 (note "traceback location matching")
 
 (assert-t (numberp (cmdbuf-loc-match test-text test-dbgr)) "basic location")
-(assert-equal "/Users/mypizza-web/development.rb"
+(assert-equal "/home/rocky/realgud-byebug/test/gcd.rb"
 	      (match-string (realgud-cmdbuf-info-file-group test-dbgr)
 			    test-text) "extract file name")
-(assert-equal "2"
+(assert-equal "4"
 	      (match-string (realgud-cmdbuf-info-line-group test-dbgr)
 			    test-text) "extract line number")
 

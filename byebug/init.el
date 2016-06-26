@@ -42,7 +42,7 @@ realgud-loc-pat struct")
 ;; => 4: def gcd
 (setf (gethash "loc" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
-       :regexp (format "^\\[[0-9]+, [0-9]+\\] in %s\n.*\n=>[ ]*%s: "
+       :regexp (format "^\\[[0-9]+, [0-9]+\\] in %s\n\\(?:.\\|\n\\)*\n=>[ ]*%s: "
 		       realgud:byebug-frame-file-regexp realgud:regexp-captured-num)
        :file-group 1
        :line-group 2))
@@ -77,14 +77,40 @@ realgud-loc-pat struct")
 
 ;; Regular expression that describes a "breakpoint set" line
 ;; For example:
-;   Breakpoint 1: /Users/rocky/src/environments/development.rb @ 14 (Enabled)
-(setf (gethash "brkpt-set" realgud:byebug-pat-hash)
+;;   Successfully created breakpoint with id
+;; (setf (gethash "brkpt-set" realgud:byebug-pat-hash)
+;;       (make-realgud-loc-pat
+;;        :regexp (format "^Successfully created breakpoint with id %s \\(.+\\), @ \\([.*]\\) "
+;; 		       realgud:regexp-captured-num)
+;;        :num 1))
+
+
+;;  Regular expression that describes debugger "backtrace" command line.
+;;  e.g.
+;; --> #0  Object.gcd(a#Fixnum, b#Fixnum) at /home/rocky/realgud-byebug/test/gcd.rb:6
+;;     #1  Object.gcd(a#Fixnum, b#Fixnum) at /home/rocky/realgud-byebug/test/gcd.rb:15
+;;     #2  <top (required)> at /home/rocky/realgud-byebug/test/gcd.rb:19
+(setf (gethash "debugger-backtrace" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
-       :regexp (format "^Breakpoint %s \\(.+\\), @ \\([.*]\\) "
-		       realgud:regexp-captured-num)
-       :num 1
+       :regexp 	(concat realgud:trepan-frame-start-regexp " "
+			realgud:trepan-frame-num-regexp
+			"[ \t]+[^ ]* at \\([^:]*\\):\\([0-9]+\\)"
+			)
+       :num 2
        :file-group 3
-       :line-group 4))
+       :line-group 4)
+      )
+
+(setf (gethash "font-lock-keywords" realgud:byebug-pat-hash)
+      '(
+	;; The frame number and first type name, if present.
+	("^\\(-->\\|   \\)? #\\([0-9]+\\)[ \t]+\\([^ ]*\\) at \\([^:]*\\):\\([0-9]*\\)"
+	 (2 realgud-backtrace-number-face)
+	 (3 font-lock-constant-face)        ; e.g. Object
+	 (4 realgud-file-name-face)
+	 (5 realgud-line-number-face))
+	))
+
 
 ;;  Regular expression that describes a Ruby $! string
 (setf (gethash "dollar-bang" realgud:byebug-pat-hash)
@@ -112,7 +138,12 @@ realgud-loc-pat struct")
 (setf (gethash "break"    realgud:byebug-command-hash) "break %l")
 (setf (gethash "continue" realgud:byebug-command-hash) "continue")
 (setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
-(setf (gethash "shell" realgud:trepan-command-hash) "irb")
+(setf (gethash "shell"    realgud:byebug-command-hash) "irb")
+(setf (gethash "restart"  realgud:byebug-command-hash) "restart")
+(setf (gethash "until"    realgud:perldb-command-hash) "continue %l")
+
+;; Unsupported features:
+(setf (gethash "jump"     realgud:byebug-command-hash) "*not-implemented*")
 
 
 (provide-me "realgud:byebug-")

@@ -77,11 +77,6 @@ fringe and marginal icons.
 				       'realgud:byebug-minibuffer-history
 				       nil))
 	 )
-    (if cmd-buf
-	(with-current-buffer cmd-buf
-	  (realgud-command "set annotate 1" nil nil nil)
-	  )
-      )
     )
   )
 

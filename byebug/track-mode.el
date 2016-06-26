@@ -52,11 +52,11 @@ Key bindings:
   :global nil
   :group 'realgud:byebug
   :keymap realgud:byebug-track-mode-map
+  (realgud:track-set-debugger "realgud:byebug")
   (if realgud:byebug-track-mode
       (progn
-	(realgud:track-set-debugger "byebug" "realgud:byebug")
-        (realgud:byebug-track-mode-hook)
-        (realgud:track-mode-enable))
+        (realgud-track-mode-setup t)
+        (realgud:byebug-track-mode-hook))
     (progn
       (setq realgud-track-mode nil)
       ))

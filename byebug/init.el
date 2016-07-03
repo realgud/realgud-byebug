@@ -34,6 +34,8 @@ realgud-loc-pat struct")
 
 (defconst realgud:byebug-frame-file-regexp "\\(.+\\)")
 
+(defconst realgud:byebug-file-line-regexp "\\([^:]+\\):\\([0-9]+\\)")
+
 ;; Regular expression that describes a byebug location generally shown
 ;; before a command prompt.
 ;; For example:
@@ -67,7 +69,9 @@ realgud-loc-pat struct")
 ;;	from /usr/lib/ruby/gems/rspec/compatibility.rb:6:in `const_missing'
 (setf (gethash "lang-backtrace" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
-       :regexp "^\\(?:[\t]from \\)?\\([^:]+\\):\\([0-9]+\\)\\(?:in `.*'\\)?"
+       :regexp (format "(^\\(?:[\t]from \\)?%s\\(?:in `.*'\\)?"
+		       realgud:byebug-file-line-regexp)
+
        :file-group 1
        :line-group 2))
 
@@ -78,11 +82,15 @@ realgud-loc-pat struct")
 ;; Regular expression that describes a "breakpoint set" line
 ;; For example:
 ;;   Successfully created breakpoint with id
-;; (setf (gethash "brkpt-set" realgud:byebug-pat-hash)
-;;       (make-realgud-loc-pat
-;;        :regexp (format "^Successfully created breakpoint with id %s \\(.+\\), @ \\([.*]\\) "
-;; 		       realgud:regexp-captured-num)
-;;        :num 1))
+(setf (gethash "brkpt-set" realgud:byebug-pat-hash)
+      (make-realgud-loc-pat
+       :regexp (format "^Created breakpoint %s at %s"
+		       realgud:regexp-captured-num
+		       realgud:byebug-file-line-regexp)
+       :num 1
+       :file-group 2
+       :line-group 3
+       ))
 
 
 ;;  Regular expression that describes debugger "backtrace" command line.

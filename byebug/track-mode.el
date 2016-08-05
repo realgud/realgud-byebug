@@ -16,7 +16,7 @@
 
 ;; byebug tracking a comint or eshell buffer.
 
-(eval-when-compile (require 'cl))
+(eval-when-compile (require 'cl-lib))
 
 (require 'realgud)
 

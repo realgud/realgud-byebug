@@ -14,7 +14,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;  `realgud:byebug' Main interface to byebug via Emacs
-(require 'cl)
+(require 'cl-lib)
 (require 'load-relative)
 (require 'realgud)
 (require-relative-list '("core" "track-mode") "realgud:byebug-")
@@ -24,7 +24,7 @@
 (defgroup realgud:byebug nil
   "The realgud interface to byebug"
   :group 'realgud
-  :version "24.5")
+  :version "24.3")
 
 ;; -------------------------------------------------------------------
 ;; User definable variables

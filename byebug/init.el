@@ -93,6 +93,33 @@ realgud-loc-pat struct")
        ))
 
 
+;; Regular expression that describes a debugger "delete" (breakpoint) response.
+;; For example:
+;;   Deleted breakpoint 1.
+(setf (gethash "brkpt-del" realgud:trepanpl-pat-hash)
+      (make-realgud-loc-pat
+       :regexp (format "^Deleted breakpoint %s\n"
+		       realgud:regexp-captured-num)
+       :num 1))
+
+;; Regular expression that describes a debugger "disable" (breakpoint) response.
+;; For example:
+;;   Breakpoint entry 4 disabled.
+(setf (gethash "brkpt-disable" realgud:trepanpl-pat-hash)
+      (make-realgud-loc-pat
+       :regexp (format "^Breakpoint %s disabled"
+		       realgud:regexp-captured-num)
+       :num 1))
+
+;; Regular expression that describes a debugger "enable" (breakpoint) response.
+;; For example:
+;;   Breakpoint 4 enabled.
+(setf (gethash "brkpt-enable" realgud:trepanpl-pat-hash)
+      (make-realgud-loc-pat
+       :regexp (format "^Breakpoint %s enabled"
+		       realgud:regexp-captured-num)
+       :num 1))
+
 ;;  Regular expression that describes debugger "backtrace" command line.
 ;;  e.g.
 ;; --> #0  Object.gcd(a#Fixnum, b#Fixnum) at /home/rocky/realgud-byebug/test/gcd.rb:6
@@ -146,6 +173,8 @@ realgud-loc-pat struct")
 (setf (gethash "break"    realgud:byebug-command-hash) "break %l")
 (setf (gethash "continue" realgud:byebug-command-hash) "continue")
 (setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
+(setf (gethash "disable"  realgud:byebug-command-hash) "disable breakpoints %p")
+(setf (gethash "enable"   realgud:byebug-command-hash) "enable breakpoints %p")
 (setf (gethash "shell"    realgud:byebug-command-hash) "irb")
 (setf (gethash "restart"  realgud:byebug-command-hash) "restart")
 (setf (gethash "until"    realgud:byebug-command-hash) "continue %l")

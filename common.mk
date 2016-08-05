@@ -1,7 +1,7 @@
 lisp_files := $(wildcard *.el)
 lisp_LISP = $(lisp_files)
 MOSTLYCLEANFILES = *.elc
-EMACSLOADPATH=:/home/rocky/.emacs.d/elpa/test-simple-20160303.36/:/home/rocky/.emacs.d/elpa/realgud-20160801.1144/
+EMACSLOADPATH=:/home/rocky/.emacs.d/elpa/test-simple-20160303.36/:/home/rocky/.emacs.d/elpa/realgud-20160804.648/
 
 short:
 	$(MAKE) 2>&1 >/dev/null | ruby $(top_srcdir)/make-check-filter.rb

@@ -9,6 +9,8 @@ RUBY   ?= ruby
 
 lispdir = @lispdir@
 
+lisp_files = $(wildcard *.el)
+lisp_LISP = $(lisp_files)
 include common.mk
 
 PHONY=check clean dist distclean test check-short check-terse install-short

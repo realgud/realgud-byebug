@@ -182,5 +182,7 @@ realgud-loc-pat struct")
 ;; Unsupported features:
 (setf (gethash "jump"     realgud:byebug-command-hash) "*not-implemented*")
 
+(setf (gethash "byebug" realgud-command-hash) realgud:byebug-command-hash)
+(setf (gethash "byebug" realgud-pat-hash) realgud:byebug-pat-hash)
 
 (provide-me "realgud:byebug-")

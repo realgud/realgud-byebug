@@ -96,7 +96,7 @@ realgud-loc-pat struct")
 ;; Regular expression that describes a debugger "delete" (breakpoint) response.
 ;; For example:
 ;;   Deleted breakpoint 1.
-(setf (gethash "brkpt-del" realgud:trepanpl-pat-hash)
+(setf (gethash "brkpt-del" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
        :regexp (format "^Deleted breakpoint %s\n"
 		       realgud:regexp-captured-num)
@@ -105,7 +105,7 @@ realgud-loc-pat struct")
 ;; Regular expression that describes a debugger "disable" (breakpoint) response.
 ;; For example:
 ;;   Breakpoint entry 4 disabled.
-(setf (gethash "brkpt-disable" realgud:trepanpl-pat-hash)
+(setf (gethash "brkpt-disable" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
        :regexp (format "^Breakpoint %s disabled"
 		       realgud:regexp-captured-num)
@@ -114,7 +114,7 @@ realgud-loc-pat struct")
 ;; Regular expression that describes a debugger "enable" (breakpoint) response.
 ;; For example:
 ;;   Breakpoint 4 enabled.
-(setf (gethash "brkpt-enable" realgud:trepanpl-pat-hash)
+(setf (gethash "brkpt-enable" realgud:byebug-pat-hash)
       (make-realgud-loc-pat
        :regexp (format "^Breakpoint %s enabled"
 		       realgud:regexp-captured-num)
@@ -170,7 +170,7 @@ realgud-loc-pat struct")
 (setf (gethash realgud:byebug-debugger-name
 	       realgud-command-hash) realgud:byebug-command-hash)
 
-(setf (gethash "break"    realgud:byebug-command-hash) "break %l")
+(setf (gethash "break"    realgud:byebug-command-hash) "break %X:%l")
 (setf (gethash "continue" realgud:byebug-command-hash) "continue")
 (setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
 (setf (gethash "disable"  realgud:byebug-command-hash) "disable breakpoints %p")
@@ -182,5 +182,7 @@ realgud-loc-pat struct")
 ;; Unsupported features:
 (setf (gethash "jump"     realgud:byebug-command-hash) "*not-implemented*")
 
+(setf (gethash "byebug" realgud-command-hash) realgud:byebug-command-hash)
+(setf (gethash "byebug" realgud-pat-hash) realgud:byebug-pat-hash)
 
 (provide-me "realgud:byebug-")

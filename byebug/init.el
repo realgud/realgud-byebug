@@ -170,7 +170,7 @@ realgud-loc-pat struct")
 (setf (gethash realgud:byebug-debugger-name
 	       realgud-command-hash) realgud:byebug-command-hash)
 
-(setf (gethash "break"    realgud:byebug-command-hash) "break %l")
+(setf (gethash "break"    realgud:byebug-command-hash) "break %X:%l")
 (setf (gethash "continue" realgud:byebug-command-hash) "continue")
 (setf (gethash "clear"    realgud:byebug-command-hash) "*not-implemented*")
 (setf (gethash "disable"  realgud:byebug-command-hash) "disable breakpoints %p")
